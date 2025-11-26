@@ -60,6 +60,19 @@ const createApiResponseType = ({
     ts.factory.createTypeReferenceNode(BuildCommonTypeName(apiResponse.name)),
   );
 
+  // For suspense queries, use the Response type directly (without ["data"] accessor)
+  // because errors are handled by ErrorBoundary and data is guaranteed to be defined
+  const suspenseResponseDataType = ts.factory.createTypeParameterDeclaration(
+    undefined,
+    TData.text,
+    undefined,
+    ts.factory.createTypeReferenceNode(
+      ts.factory.createIdentifier(
+        `${capitalizeFirstLetter(methodName)}Response`,
+      ),
+    ),
+  );
+
   const responseErrorType = ts.factory.createTypeParameterDeclaration(
     undefined,
     TError.text,
@@ -93,6 +106,13 @@ const createApiResponseType = ({
      * MyClassMethodDefaultResponse
      */
     responseDataType,
+    /**
+     * Suspense-specific response data type that directly references the Response type
+     * without the ["data"] accessor, ensuring data is never undefined
+     *
+     * MyClassMethodResponse
+     */
+    suspenseResponseDataType,
     /**
      * ErrorDataType
      *
@@ -287,18 +307,24 @@ function createQueryHook({
                 ),
               ),
             ],
-            undefined,
+            queryString === "useSuspenseQuery"
+              ? ts.factory.createTypeReferenceNode(
+                  ts.factory.createIdentifier("UseSuspenseQueryResult"),
+                  [
+                    ts.factory.createTypeReferenceNode(TData),
+                    ts.factory.createTypeReferenceNode(TError),
+                  ],
+                )
+              : undefined,
             EqualsOrGreaterThanToken,
             ts.factory.createCallExpression(
               ts.factory.createIdentifier(queryString),
               isInfiniteQuery
                 ? []
-                : queryString === "useSuspenseQuery"
-                  ? []
-                  : [
-                      ts.factory.createTypeReferenceNode(TData),
-                      ts.factory.createTypeReferenceNode(TError),
-                    ],
+                : [
+                    ts.factory.createTypeReferenceNode(TData),
+                    ts.factory.createTypeReferenceNode(TError),
+                  ],
               [
                 ts.factory.createObjectLiteralExpression([
                   ts.factory.createPropertyAssignment(
@@ -473,6 +499,7 @@ export const createUseQuery = ({
   const {
     apiResponse: defaultApiResponse,
     responseDataType,
+    suspenseResponseDataType,
     responseErrorType,
   } = createApiResponseType({
     methodName,
@@ -500,7 +527,7 @@ export const createUseQuery = ({
   const suspenseQueryHook = createQueryHook({
     queryString: "useSuspenseQuery",
     suffix: "Suspense",
-    responseDataType,
+    responseDataType: suspenseResponseDataType,
     responseErrorType,
     requestParams,
     method,

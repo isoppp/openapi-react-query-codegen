@@ -100,6 +100,11 @@ export const createImports = ({
           ts.factory.createImportSpecifier(
             false,
             undefined,
+            ts.factory.createIdentifier("UseSuspenseQueryResult"),
+          ),
+          ts.factory.createImportSpecifier(
+            false,
+            undefined,
             ts.factory.createIdentifier("UseMutationOptions"),
           ),
           ts.factory.createImportSpecifier(

@@ -448,7 +448,7 @@ export const useFindPetsSuspense = <
     "queryKey" | "queryFn"
   >,
 ) =>
-  useSuspenseQuery<TData, TError>({
+  useSuspenseQuery({
     queryKey: Common.UseFindPetsKeyFn(clientOptions, queryKey),
     queryFn: () =>
       findPets({ ...clientOptions }).then(
@@ -468,7 +468,7 @@ export const useGetNotDefinedSuspense = <
     "queryKey" | "queryFn"
   >,
 ) =>
-  useSuspenseQuery<TData, TError>({
+  useSuspenseQuery({
     queryKey: Common.UseGetNotDefinedKeyFn(clientOptions, queryKey),
     queryFn: () =>
       getNotDefined({ ...clientOptions }).then(
@@ -488,7 +488,7 @@ export const useFindPetByIdSuspense = <
     "queryKey" | "queryFn"
   >,
 ) =>
-  useSuspenseQuery<TData, TError>({
+  useSuspenseQuery({
     queryKey: Common.UseFindPetByIdKeyFn(clientOptions, queryKey),
     queryFn: () =>
       findPetById({ ...clientOptions }).then(
@@ -508,7 +508,7 @@ export const useFindPaginatedPetsSuspense = <
     "queryKey" | "queryFn"
   >,
 ) =>
-  useSuspenseQuery<TData, TError>({
+  useSuspenseQuery({
     queryKey: Common.UseFindPaginatedPetsKeyFn(clientOptions, queryKey),
     queryFn: () =>
       findPaginatedPets({ ...clientOptions }).then(
