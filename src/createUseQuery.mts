@@ -293,10 +293,12 @@ function createQueryHook({
               ts.factory.createIdentifier(queryString),
               isInfiniteQuery
                 ? []
-                : [
-                    ts.factory.createTypeReferenceNode(TData),
-                    ts.factory.createTypeReferenceNode(TError),
-                  ],
+                : queryString === "useSuspenseQuery"
+                  ? []
+                  : [
+                      ts.factory.createTypeReferenceNode(TData),
+                      ts.factory.createTypeReferenceNode(TError),
+                    ],
               [
                 ts.factory.createObjectLiteralExpression([
                   ts.factory.createPropertyAssignment(

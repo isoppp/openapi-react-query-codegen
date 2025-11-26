@@ -5,13 +5,12 @@ export const SuspenseChild = () => {
     query: { tags: [], limit: 10 },
   });
   console.log({ error });
-  if (!Array.isArray(data)) {
-    return <div>Error!</div>;
-  }
 
+  // After Issue #181 fix: data is guaranteed to be defined
+  // No need for undefined checks or optional chaining
   return (
     <ul>
-      {data?.map((pet) => (
+      {data.map((pet) => (
         <li key={pet.id}>{pet.name}</li>
       ))}
     </ul>
